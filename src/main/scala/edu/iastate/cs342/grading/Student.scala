@@ -9,19 +9,20 @@ case class Student private (val firstName: String, val lastName: String, val net
   lazy val repoFolderPath = RulesAndAssumptions.createRepoFileSystemLocationFromStudentID(netID)
 
   def canEqual(other: Any) = {
-    other.isInstanceOf[edu.iastate.cs342.grading.Student]
+    other.isInstanceOf[edu.iastate.cs342.grading.Student] || other.isInstanceOf[String]
   }
 
   override def equals(other: Any) = {
     other match {
-      case that: edu.iastate.cs342.grading.Student => that.canEqual(Student.this) && firstName == that.firstName && lastName == that.lastName && netID == that.netID
+      case that: edu.iastate.cs342.grading.Student => that.canEqual(Student.this) && netID == that.netID
+      case that: String => that.canEqual(netID) && netID == that
       case _ => false
     }
   }
 
   override def hashCode() = {
     val prime = 41
-    prime * (prime * (prime + firstName.hashCode) + lastName.hashCode) + netID.hashCode
+    prime * netID.hashCode
   }
 
   override lazy val toString = fullName + " " + netID
@@ -36,12 +37,16 @@ object Student {
    */
   def apply(lineFromFile: String) = {
     val values = lineFromFile.split(",")
-    assert(values.length == 3, "Read an Invalid line from the students file. Please ensure that the format is: firstName,lastName,netID")
-    val firstName = values(0)
-    val lastName = values(1)
-    val netID = values(2)
-    val repoURL = RulesAndAssumptions.createRepoURLFromStudentID(netID)
-    new Student(firstName, lastName, netID, repoURL)
+    values.length match {
+      case 3 => {
+        val firstName = values(0)
+        val lastName = values(1)
+        val netID = values(2)
+        val repoURL = RulesAndAssumptions.createRepoURLFromStudentID(netID)
+        new Student(firstName, lastName, netID, repoURL)
+      }
+      case _ => throw new RuntimeException("Read an Invalid line from the students file. Please ensure that the format is: firstName,lastName,netID")
+    }
   }
 }
 
