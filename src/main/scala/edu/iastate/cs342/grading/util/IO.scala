@@ -19,8 +19,18 @@ object IO {
   val separator: String = File.separator
 
   def toFile(path: String): File = FileUtils.getFile(path).getAbsoluteFile()
-  
+
   def toAbsolute(path: String): String = FileUtils.getFile(path).getAbsolutePath()
+
+  def copy(from: String, to: String) {
+    val srcDir = FileUtils.getFile(from)
+    val destDir = FileUtils.getFile(to)
+    createFolder(destDir.getAbsolutePath())
+    val files = IO.listFiles(srcDir.getAbsolutePath())
+    for (file <- files) {
+      FileUtils.copyFileToDirectory(FileUtils.getFile(file), destDir)
+    }
+  }
 
   def createFolder(folderPath: String): String = {
     val folder = FileUtils.getFile(folderPath)
@@ -74,7 +84,7 @@ object IO {
     newFile.setWritable(true)
     newFile.getCanonicalPath()
   }
-  
+
   def concatPath(basePath: String, onePath: String, toConcat: String*): String = {
     val tempPath = FilenameUtils.concat(basePath, onePath)
     def recursivelyConcatenate(files: Seq[String]): String = {

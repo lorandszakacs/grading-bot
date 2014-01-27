@@ -1,0 +1,45 @@
+package edu.iastate.cs342.grading.racket
+
+import edu.iastate.cs342.grading.constants.Constants
+import edu.iastate.cs342.grading.util.IO
+import scala.sys.process.Process
+import scala.sys.process.ProcessLogger
+import edu.iastate.cs342.grading.command.Command
+
+private sealed trait RacketCommand extends Command {
+  val fullCommandToExecute: String = Constants.ConfigValues.PathToRacket
+
+  val CompilationErrorMarker: String = "does-not-compile:"
+  val CannotOpenInputFileMarkers: String = "cannot open input file"
+}
+
+private class RacketRun(fileToRun: String, override val rootFolder: String) extends RacketCommand {
+  override val commandSequence: Seq[String] = Seq(fullCommandToExecute, fileToRun)
+
+  override def determineErrors(out: List[String], err: List[String]) {
+    if (!err.isEmpty) {
+      val compilationError = err.find(s => s.contains(CompilationErrorMarker))
+      val cannotOpenInputFile = err.find(s => s.contains(CannotOpenInputFileMarkers))
+      val errorMessage = err.mkString(" ")
+      if (compilationError.isDefined) throw new RacketCompilationError(errorMessage)
+      else if (cannotOpenInputFile.isDefined) throw new RacketCannotOpenFileError(errorMessage)
+      else throw new RacketRuntimeError(errorMessage)
+    }
+  }
+}
+
+class RacketHomeworkExecutor private (val rootFolder: String) {
+
+  def run(fileToRun: String): String = {
+    val racketRun = new RacketRun(fileToRun, rootFolder)
+    racketRun.execute()
+  }
+
+  def deleteFolder() {
+    IO.deleteFolder(rootFolder)
+  }
+}
+
+object RacketHomeworkExecutor {
+  def apply(rootFolder: String) = new RacketHomeworkExecutor(rootFolder)
+}
