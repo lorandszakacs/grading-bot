@@ -3,6 +3,7 @@ package edu.iastate.cs342.grading.command
 import edu.iastate.cs342.grading.util.IO
 import scala.sys.process.Process
 import scala.sys.process.ProcessLogger
+import scala.sys.process.ProcessBuilder
 import scala.collection.mutable
 
 trait Command {
@@ -25,9 +26,18 @@ trait Command {
    */
   val commandSequence: Seq[String]
 
-  def execute(): String = {
+  protected def createProcess: ProcessBuilder = {
     val folderWhereToExecute = IO.toFile(rootFolder + "/")
-    val proc = Process(commandSequence, folderWhereToExecute)
+    Process(commandSequence, folderWhereToExecute)
+  }
+
+  /**
+   * @return a pair of List[String] where the first element is the
+   * output lines corresponding to the output, the second one is the
+   * lines corresponding to the standard error of the command
+   */
+  def execute(): (List[String], List[String]) = {
+    val proc = createProcess
     val out = new mutable.ListBuffer[String]()
     val err = new mutable.ListBuffer[String]()
     val logger = ProcessLogger(
@@ -35,8 +45,10 @@ trait Command {
       (e: String) => err.append(e))
 
     proc ! logger
-    determineErrors(out.toList, err.toList)
-    out.toString
+    val outList = out.toList
+    val errList = err.toList
+    determineErrors(outList, errList)
+    (outList, errList)
   }
 
   /**
@@ -45,6 +57,6 @@ trait Command {
    *
    * This method should throw exceptions
    */
-  def determineErrors(out: List[String], err: List[String])
+  def determineErrors(out: List[String], err: List[String]) {}
 
 }

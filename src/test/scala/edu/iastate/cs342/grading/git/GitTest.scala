@@ -27,7 +27,7 @@ class GitTest extends FunSuite {
   test("test git status") {
     val CloneRepoURL = "git@github.com:ComS342-ISU/grading-unit-test-clone.git"
     val repoExecutor = cloneRepo(CloneRepoURL, "test-git-status")
-    val status = repoExecutor.status().replace(" ", "")
+    val status = repoExecutor.status()._1.mkString.replace(" ", "")
     assert(status.contains("nothingtocommit,workingdirectoryclean"))
     repoExecutor.deleteRepo()
   }
@@ -38,7 +38,7 @@ class GitTest extends FunSuite {
     val fileToAdd = "feedback.md"
     IO.createFile(IO.concatPath(repoExecutor.gitRepoPath, fileToAdd))
     repoExecutor.add(fileToAdd)
-    val status = repoExecutor.status().replace(" ", "")
+    val status = repoExecutor.status()._1.mkString.replace(" ", "")
     assert(status.contains("newfile:" + fileToAdd), "git status does not indicate that file was added")
     repoExecutor.deleteRepo()
   }

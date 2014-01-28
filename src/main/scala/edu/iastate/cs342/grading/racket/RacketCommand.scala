@@ -9,11 +9,11 @@ import edu.iastate.cs342.grading.command.Command
 private sealed trait RacketCommand extends Command {
   val fullCommandToExecute: String = Constants.ConfigValues.PathToRacket
 
-  val CompilationErrorMarker: String = "does-not-compile:"
-  val CannotOpenInputFileMarkers: String = "cannot open input file"
 }
 
 private class RacketRun(fileToRun: String, override val rootFolder: String) extends RacketCommand {
+  val CannotOpenInputFileMarkers: String = "cannot open input file"
+  val CompilationErrorMarker: String = "does-not-compile:"
   override val commandSequence: Seq[String] = Seq(fullCommandToExecute, fileToRun)
 
   override def determineErrors(out: List[String], err: List[String]) {
@@ -30,7 +30,7 @@ private class RacketRun(fileToRun: String, override val rootFolder: String) exte
 
 class RacketHomeworkExecutor private (val rootFolder: String) {
 
-  def run(fileToRun: String): String = {
+  def run(fileToRun: String): (List[String], List[String]) = {
     val racketRun = new RacketRun(fileToRun, rootFolder)
     racketRun.execute()
   }
