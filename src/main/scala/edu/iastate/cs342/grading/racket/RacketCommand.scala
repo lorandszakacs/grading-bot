@@ -28,7 +28,7 @@ private class RacketRun(fileToRun: String, override val rootFolder: String) exte
   }
 }
 
-class RacketHomeworkExecutor private (val rootFolder: String) {
+class RacketExecutor private (val rootFolder: String) {
 
   def run(fileToRun: String): (List[String], List[String]) = {
     val racketRun = new RacketRun(fileToRun, rootFolder)
@@ -40,6 +40,6 @@ class RacketHomeworkExecutor private (val rootFolder: String) {
   }
 }
 
-object RacketHomeworkExecutor {
-  def apply(rootFolder: String) = new RacketHomeworkExecutor(rootFolder)
+object RacketExecutor {
+  def apply(rootFolder: String) = new RacketExecutor(rootFolder)
 }

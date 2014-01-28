@@ -30,20 +30,20 @@ class RacketTest extends FunSuite with BeforeAndAfterEach {
     
   }
   test("test run racket compiler error test") {
-    val racketExecutor = RacketHomeworkExecutor(racketFolder)
+    val racketExecutor = RacketExecutor(racketFolder)
     intercept[RacketCompilationError] {
       racketExecutor.run("test-file-compilation-error.rkt")
     }
   }
 
   test("test run racket correct test") {
-    val racketExecutor = RacketHomeworkExecutor(racketFolder)
+    val racketExecutor = RacketExecutor(racketFolder)
     val output = racketExecutor.run("test-file-correct.rkt")
     assert(true === false, "FIXME")
   }
 
   test("test run racket runtime-error test") {
-    val racketExecutor = RacketHomeworkExecutor(racketFolder)
+    val racketExecutor = RacketExecutor(racketFolder)
     intercept[RacketRuntimeError] {
       racketExecutor.run("test-file-runtime-error.rkt")
     }
