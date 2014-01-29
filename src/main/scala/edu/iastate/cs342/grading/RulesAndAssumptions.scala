@@ -26,7 +26,7 @@ object RulesAndAssumptions {
    */
   def createRepoFileSystemLocationFromStudentID(netID: String) = IO.concatPath(Constants.ConfigValues.PathWhereToDownload, netID)
 
-  val StudentSolutionFolder = "my-solution"
+  val StudentSolutionFolder = "my-solutions"
 
   val GradingTestName = "grading-test.rkt"
 }
