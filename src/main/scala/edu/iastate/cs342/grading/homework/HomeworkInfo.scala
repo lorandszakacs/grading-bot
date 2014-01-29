@@ -6,7 +6,7 @@ class HomeworkInfo private (val testSuites: List[(String, Int)], val imports: Li
   final val ResultMarker = "results: "
 
   /**
-   * example: 
+   * example:
    * #lang racket
    *
    * (#%require rackunit)
@@ -33,6 +33,12 @@ class HomeworkInfo private (val testSuites: List[(String, Int)], val imports: Li
   }
 }
 
+/**
+ * @author lorand
+ * FIXME:
+ * This should be rewritten to use a regex parser similar to how the REPL is built.
+ *
+ */
 object HomeworkInfo {
   private val CommentMarker = "#"
   private val TestSuiteMarker = "*"
