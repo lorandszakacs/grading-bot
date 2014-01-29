@@ -15,7 +15,7 @@ class RacketTest extends FunSuite with BeforeAndAfterEach {
 
   override def beforeEach() {
     def copyFiles() {
-      IO.copy(racketFolder, testFolder)
+      IO.copyFolder(racketFolder, testFolder)
     }
     copyFiles()
   }

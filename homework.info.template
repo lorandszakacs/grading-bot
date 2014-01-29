@@ -1,0 +1,16 @@
+#the name of the folder in which this particular homework can be found
+homework-name: homework01
+
+#the names of the tests suites to be run followed by the total amount of points to be awarded
+#if all are correct. Format of each testsuite-points pair should be :
+#* name-of-test-suite number-of-points
+test-suites:
+* part-one-test-suite 35
+* 18-series-a-test-suite 15
+* 18-series-b-test-suite 15
+
+#what files should be "imported" with a #%require expression.
+imports: rackunit "hw01-tests.rkt" "test-infrastructure.rkt"
+
+#name of the feedback file
+feedback-file-name: feedback.md

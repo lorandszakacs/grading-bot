@@ -25,4 +25,8 @@ object RulesAndAssumptions {
    * Repositories will be saved to a subfolder of the folder pointed to in the application.conf file
    */
   def createRepoFileSystemLocationFromStudentID(netID: String) = IO.concatPath(Constants.ConfigValues.PathWhereToDownload, netID)
+
+  val StudentSolutionFolder = "my-solution"
+
+  val GradingTestName = "grading-test.rkt"
 }

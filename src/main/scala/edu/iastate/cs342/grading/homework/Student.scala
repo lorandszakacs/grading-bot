@@ -1,7 +1,6 @@
-package edu.iastate.cs342.grading
+package edu.iastate.cs342.grading.homework
 
-import edu.iastate.cs342.grading.constants.Constants
-import edu.iastate.cs342.grading.util.IO
+import edu.iastate.cs342.grading.RulesAndAssumptions
 
 case class Student private (val firstName: String, val lastName: String, val netID: String, val repoURL: String) extends Equals {
   val fullName = firstName + " " + lastName
@@ -9,12 +8,12 @@ case class Student private (val firstName: String, val lastName: String, val net
   lazy val repoFolderPath = RulesAndAssumptions.createRepoFileSystemLocationFromStudentID(netID)
 
   def canEqual(other: Any) = {
-    other.isInstanceOf[edu.iastate.cs342.grading.Student] || other.isInstanceOf[String]
+    other.isInstanceOf[edu.iastate.cs342.grading.homework.Student] || other.isInstanceOf[String]
   }
 
   override def equals(other: Any) = {
     other match {
-      case that: edu.iastate.cs342.grading.Student => that.canEqual(Student.this) && netID == that.netID
+      case that: edu.iastate.cs342.grading.homework.Student => that.canEqual(Student.this) && netID == that.netID
       case that: String => that.canEqual(netID) && netID == that
       case _ => false
     }

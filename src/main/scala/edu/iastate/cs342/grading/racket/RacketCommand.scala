@@ -8,7 +8,6 @@ import edu.iastate.cs342.grading.command.Command
 
 private sealed trait RacketCommand extends Command {
   val fullCommandToExecute: String = Constants.ConfigValues.PathToRacket
-
 }
 
 private class RacketRun(fileToRun: String, override val rootFolder: String) extends RacketCommand {
@@ -29,7 +28,6 @@ private class RacketRun(fileToRun: String, override val rootFolder: String) exte
 }
 
 class RacketExecutor private (val rootFolder: String) {
-
   def run(fileToRun: String): (List[String], List[String]) = {
     val racketRun = new RacketRun(fileToRun, rootFolder)
     racketRun.execute()

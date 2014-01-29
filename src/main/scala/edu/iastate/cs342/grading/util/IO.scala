@@ -22,7 +22,23 @@ object IO {
 
   def toAbsolute(path: String): String = FileUtils.getFile(path).getAbsolutePath()
 
-  def copy(from: String, to: String) {
+  def copyFile(src: String, dest: String) {
+    val srcFile = FileUtils.getFile(src)
+    val destFile = FileUtils.getFile(dest)
+    FileUtils.copyFile(srcFile, destFile)
+  }
+
+  def copyFileToSubfolder(src: String, destFolder: String): String = {
+    val srcFile = FileUtils.getFile(src)
+    val fileName = srcFile.getName()
+    val root = srcFile.getParent()
+    val dest = "%s/%s/%s".format(root, destFolder, fileName)
+    val destFile = FileUtils.getFile(dest)
+    FileUtils.copyFile(srcFile, destFile)
+    destFile.getAbsolutePath()
+  }
+
+  def copyFolder(from: String, to: String) {
     val srcDir = FileUtils.getFile(from)
     val destDir = FileUtils.getFile(to)
     createFolder(destDir.getAbsolutePath())

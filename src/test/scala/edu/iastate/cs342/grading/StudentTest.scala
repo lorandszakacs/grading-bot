@@ -3,6 +3,7 @@ package edu.iastate.cs342.grading
 import org.scalatest.FunSuite
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
+import edu.iastate.cs342.grading.homework.Student
 
 @RunWith(classOf[JUnitRunner])
 class StudentTest extends FunSuite {
