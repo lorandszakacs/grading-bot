@@ -4,9 +4,9 @@ import edu.iastate.cs342.grading.constants.Constants
 import edu.iastate.cs342.grading.util.IO
 import scala.sys.process.Process
 import scala.sys.process.ProcessLogger
-import edu.iastate.cs342.grading.command.Command
+import edu.iastate.cs342.grading.command.SystemCommand
 
-private sealed trait RacketCommand extends Command {
+private sealed trait RacketCommand extends SystemCommand {
   val fullCommandToExecute: String = Constants.ConfigValues.PathToRacket
 }
 

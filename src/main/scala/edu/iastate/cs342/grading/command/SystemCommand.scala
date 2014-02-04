@@ -6,7 +6,7 @@ import scala.sys.process.ProcessLogger
 import scala.sys.process.ProcessBuilder
 import scala.collection.mutable
 
-trait Command {
+trait SystemCommand {
   /**
    * Denotes the folder in which this command should be executed in.
    * e.d. user/download/homework

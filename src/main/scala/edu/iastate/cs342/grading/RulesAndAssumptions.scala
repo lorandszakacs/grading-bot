@@ -29,4 +29,6 @@ object RulesAndAssumptions {
   val StudentSolutionFolder = "my-solutions"
 
   val GradingTestName = "grading-test.rkt"
+
+  val DefaultStudentsFile = "students.txt"
 }

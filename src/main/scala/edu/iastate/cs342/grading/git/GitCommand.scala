@@ -4,9 +4,9 @@ import edu.iastate.cs342.grading.constants.Constants
 import scala.sys.process._
 import edu.iastate.cs342.grading.util.IO
 import scala.sys.process.Process
-import edu.iastate.cs342.grading.command.Command
+import edu.iastate.cs342.grading.command.SystemCommand
 
-private sealed trait GitCommand extends Command {
+private sealed trait GitCommand extends SystemCommand {
   final override val fullCommandToExecute: String = Constants.ConfigValues.PathToGit
   final override lazy val commandSequence: Seq[String] = Seq(fullCommandToExecute) ++ gitArgumentsSeq
   protected val gitArgumentsSeq: Seq[String]

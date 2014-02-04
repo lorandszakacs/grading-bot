@@ -2,7 +2,7 @@ package edu.iastate.cs342.grading.homework
 
 import edu.iastate.cs342.grading.RulesAndAssumptions
 
-case class Student private (val firstName: String, val lastName: String, val netID: String, val repoURL: String) extends Equals {
+class Student private (val firstName: String, val lastName: String, val netID: String, val repoURL: String) extends Equals {
   val fullName = firstName + " " + lastName
 
   lazy val repoFolderPath = RulesAndAssumptions.createRepoFileSystemLocationFromStudentID(netID)

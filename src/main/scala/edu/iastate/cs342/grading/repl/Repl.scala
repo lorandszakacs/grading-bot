@@ -2,8 +2,8 @@ package edu.iastate.cs342.grading.repl
 
 class Repl {
   def start(): Unit = {
-    val interpreter = new CommandInterpreter();
-    println("type -help for instructions")
+    val interpreter = new UserCommandInterpreter();
+    println("type `help` (without backticks) for instructions.")
     while (true) {
       print("> ")
       val input = Console.readLine
@@ -13,7 +13,7 @@ class Repl {
         case _ => {
           val result = interpreter.visit(command)
           result match {
-            case CommandVisitorFail(msg) => println(msg)
+            case UserCommandVisitorFail(msg) => println(msg)
             case _ => Unit
           }
         }

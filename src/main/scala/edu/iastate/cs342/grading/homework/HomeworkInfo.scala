@@ -2,7 +2,9 @@ package edu.iastate.cs342.grading.homework
 
 import edu.iastate.cs342.grading.util.IO
 
-class TestSuiteInfo private (val name: String, val scoreValue: Int)
+class TestSuiteInfo private (val name: String, val scoreValue: Int) {
+  override lazy val toString = "%s = %d points".format(name, scoreValue)
+}
 
 object TestSuiteInfo {
   def apply(testSuiteLine: String) = {
