@@ -15,7 +15,7 @@ class HomeworkExecutor(val student: Student, val homework: HomeworkInfo) {
 
   val targetHomeworkPath = IO.concatPath(student.repoFolderPath, homework.homeworkName, RulesAndAssumptions.StudentSolutionFolder)
   val feedbackFilePath = IO.concatPath(targetHomeworkPath, homework.feedbackFileName)
-  val feedbackFileRelativePath = IO.concatPath(homework.homeworkName, homework.feedbackFileName)
+  val feedbackFileRelativePath = IO.concatPath(homework.homeworkName, RulesAndAssumptions.StudentSolutionFolder, homework.feedbackFileName)
   val gradingTestFilePath = IO.concatPath(targetHomeworkPath, GradingTestName)
 
   def grabHomework() {
@@ -94,10 +94,11 @@ class HomeworkExecutor(val student: Student, val homework: HomeworkInfo) {
     cleanUpUselessFiles()
   }
 
-  def addFeedbackFile() {
+  def addAndCommitFeedbackFile() {
     val gitRepoExec = GitRepositoryExecutor(student.repoFolderPath)
     try {
       gitRepoExec.add(feedbackFileRelativePath)
+      gitRepoExec.commit("Added feedback.md file for " + homework.homeworkName)
     } catch {
       case e: Exception => {
         val error = "failed to add the feedbackfile for student: " + student.toString + "\nReason:\n" + e.getMessage() + "\n\n"

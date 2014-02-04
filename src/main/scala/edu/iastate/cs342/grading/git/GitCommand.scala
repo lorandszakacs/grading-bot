@@ -42,8 +42,7 @@ private case class GitPush(override val rootFolder: String) extends GitCommand {
   private val PushSuccededMarker = "done."
 
   override def determineErrors(out: List[String], err: List[String]) {
-    val pushFailed = !(out.find(s => s.contains(PushSuccededMarker)).isDefined)
-    if (pushFailed) throw new GitCloneFailed(err.mkString("\n"))
+    //TODO: add error checking for push.
   }
 }
 
