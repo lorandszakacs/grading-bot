@@ -6,7 +6,14 @@ name := "download-and-grade"
 
 version := "0.1"
 
-scalaVersion := "2.10.0"
+scalaVersion := "2.10.2"
+
+//The path to the java environment
+javaHome := Some(file("/Library/Java/JavaVirtualMachines/jdk1.7.0_25.jdk/Contents/Home/"))
+
+//comment this out entirely if you want sbt to simply download the version specified instead
+//of using the one installed on your file system.
+//scalaHome := Some(file("/home/user/scala/trunk/"))
 
 //you can get these from maven by creating a string:
 //groupID % artifactID % revision
