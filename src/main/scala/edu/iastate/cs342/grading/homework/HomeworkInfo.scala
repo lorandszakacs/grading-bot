@@ -2,8 +2,17 @@ package edu.iastate.cs342.grading.homework
 
 import edu.iastate.cs342.grading.util.IO
 
-class HomeworkInfo private (val testSuites: List[(String, Int)], val imports: List[String], val homeworkName: String, val feedbackFileName: String) {
-  final val ResultMarker = "results: "
+class TestSuiteInfo private (val name: String, val scoreValue: Int)
+
+object TestSuiteInfo {
+  def apply(testSuiteLine: String) = {
+    val split = testSuiteLine.split(" ")
+    new TestSuiteInfo(split(0), split(1).toInt)
+  }
+}
+
+class HomeworkInfo private (val testSuites: List[TestSuiteInfo], val imports: List[String], val homeworkName: String, val feedbackFileName: String) {
+  final val ResultMarker = "###&&&***results: "
 
   /**
    * example:
@@ -23,7 +32,7 @@ class HomeworkInfo private (val testSuites: List[(String, Int)], val imports: Li
    */
   lazy val gradingTestContents = {
     val importLines = imports.map(s => "(#%%require %s)".format(s)).mkString("\n")
-    val testLines = testSuites.map(p => "(test %s)".format(p._1)).mkString("\n")
+    val testLines = testSuites.map(t => "(test %s)".format(t.name)).mkString("\n")
     "#lang racket\n" +
       importLines + "\n" +
       "(define results (list\n" +
@@ -37,7 +46,6 @@ class HomeworkInfo private (val testSuites: List[(String, Int)], val imports: Li
  * @author lorand
  * FIXME:
  * This should be rewritten to use a regex parser similar to how the REPL is built.
- *
  */
 object HomeworkInfo {
   private val CommentMarker = "#"
@@ -55,10 +63,7 @@ object HomeworkInfo {
 
     val testSuiteLines = lines.filter(_.startsWith(TestSuiteMarker))
     val trimmedTestSuiteLines = testSuiteLines.map(s => s.drop(2))
-    val testSuites = trimmedTestSuiteLines.map(s => {
-      val split = s.split(" ")
-      (split(0), split(1).toInt)
-    }).toList
+    val testSuites = trimmedTestSuiteLines.map(TestSuiteInfo(_)).toList
 
     val importLines = lines.filter(_.startsWith(ImportsMarker))
     assert(importLines.length == 1, "There should be only one line of Imports")

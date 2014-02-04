@@ -20,9 +20,9 @@ private class RacketRun(fileToRun: String, override val rootFolder: String) exte
       val compilationError = err.find(s => s.contains(CompilationErrorMarker))
       val cannotOpenInputFile = err.find(s => s.contains(CannotOpenInputFileMarkers))
       val errorMessage = err.mkString(" ")
-      if (compilationError.isDefined) throw new RacketCompilationError(errorMessage)
-      else if (cannotOpenInputFile.isDefined) throw new RacketCannotOpenFileError(errorMessage)
-      else throw new RacketRuntimeError(errorMessage)
+      if (compilationError.isDefined) throw new RacketCompilationError(errorMessage, out, err)
+      else if (cannotOpenInputFile.isDefined) throw new RacketCannotOpenFileError(errorMessage, out, err)
+      else throw new RacketRuntimeError(errorMessage, out, err)
     }
   }
 }

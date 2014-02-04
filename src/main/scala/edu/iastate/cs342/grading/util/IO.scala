@@ -165,6 +165,10 @@ object IO {
     out.flush();
     out.close();
   }
+  
+  def writeToFile(data: String, fileName: String) {
+    writeToFile(data.toCharArray(), fileName)
+  }
 
   def getByteArrayFromInputStream(input: InputStream, contentLength: Int): Array[Byte] = {
     assume(contentLength > 0, "Trying to read from an input stream with invalid content length, use the other method to do that")
