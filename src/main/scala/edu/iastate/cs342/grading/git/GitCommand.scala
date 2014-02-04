@@ -7,15 +7,16 @@ import scala.sys.process.Process
 import edu.iastate.cs342.grading.command.Command
 
 private sealed trait GitCommand extends Command {
-  override val fullCommandToExecute: String = Constants.ConfigValues.PathToGit
-  val commandSequence: Seq[String]
+  final override val fullCommandToExecute: String = Constants.ConfigValues.PathToGit
+  final override lazy val commandSequence: Seq[String] = Seq(fullCommandToExecute) ++ gitArgumentsSeq
+  protected val gitArgumentsSeq: Seq[String]
 }
 
 private case class GitClone(fromWhereURL: String, toWhere: String) extends GitCommand {
   private val CloneSuccededMarker = "Checking connectivity... done"
 
   override val rootFolder = toWhere
-  override val commandSequence: Seq[String] = Seq(fullCommandToExecute, "clone", fromWhereURL, rootFolder)
+  override val gitArgumentsSeq: Seq[String] = Seq("clone", fromWhereURL, rootFolder)
   override def createProcess: ProcessBuilder = Process(commandSequence)
 
   override def determineErrors(out: List[String], err: List[String]) {
@@ -25,11 +26,19 @@ private case class GitClone(fromWhereURL: String, toWhere: String) extends GitCo
 }
 
 private case class GitAdd(file: String, override val rootFolder: String) extends GitCommand {
-  override val commandSequence: Seq[String] = Seq(fullCommandToExecute, "add", file)
+  override val gitArgumentsSeq: Seq[String] = Seq("add", file)
 }
 
 private case class GitStatus(override val rootFolder: String) extends GitCommand {
-  override val commandSequence: Seq[String] = Seq(fullCommandToExecute, "status")
+  override val gitArgumentsSeq: Seq[String] = Seq("status")
+}
+
+private case class GitCommit(override val rootFolder: String, val message: String) extends GitCommand {
+  override val gitArgumentsSeq: Seq[String] = Seq("commit", "-m", message)
+}
+
+private case class GitPush(override val rootFolder: String) extends GitCommand {
+  override val gitArgumentsSeq: Seq[String] = Seq("push")
 }
 
 class GitRepositoryExecutor private (val gitRepoPath: String) {
@@ -47,9 +56,19 @@ class GitRepositoryExecutor private (val gitRepoPath: String) {
     gitAdd.execute()
   }
 
+  def commit(message: String) = {
+    val gitCommit = new GitCommit(gitRepoPath, message)
+    gitCommit.execute()
+  }
+
+  def push() = {
+    val gitPush = new GitPush(gitRepoPath)
+    gitPush.execute()
+  }
+
   def status() = {
     val gitStatus = new GitStatus(gitRepoPath)
-    gitStatus.execute();
+    gitStatus.execute()
   }
 
   def deleteRepo() {
