@@ -139,6 +139,14 @@ object IO {
     folder.list().isEmpty
   }
 
+  def deleteFile(file: String) {
+    FileUtils.deleteQuietly(FileUtils.getFile(file))
+  }
+
+  def deleteFile(file: File) {
+    FileUtils.deleteQuietly(file)
+  }
+
   def deleteFolder(folder: String) {
     FileUtils.deleteDirectory(FileUtils.getFile(folder))
   }
@@ -165,7 +173,7 @@ object IO {
     out.flush();
     out.close();
   }
-  
+
   def writeToFile(data: String, fileName: String) {
     writeToFile(data.toCharArray(), fileName)
   }

@@ -39,6 +39,12 @@ private case class GitCommit(override val rootFolder: String, val message: Strin
 
 private case class GitPush(override val rootFolder: String) extends GitCommand {
   override val gitArgumentsSeq: Seq[String] = Seq("push")
+  private val PushSuccededMarker = "done."
+
+  override def determineErrors(out: List[String], err: List[String]) {
+    val pushFailed = !(out.find(s => s.contains(PushSuccededMarker)).isDefined)
+    if (pushFailed) throw new GitCloneFailed(err.mkString("\n"))
+  }
 }
 
 class GitRepositoryExecutor private (val gitRepoPath: String) {

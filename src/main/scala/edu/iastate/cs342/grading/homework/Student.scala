@@ -24,7 +24,7 @@ case class Student private (val firstName: String, val lastName: String, val net
     prime * netID.hashCode
   }
 
-  override lazy val toString = fullName + " " + netID
+  override lazy val toString = netID + " " + fullName
 }
 
 object Student {

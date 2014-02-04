@@ -24,15 +24,15 @@ class HomeworkExecutorTest extends FunSuite with BeforeAndAfterEach {
     IO.deleteFolder(student.repoFolderPath)
   }
 
-  //  test("test grading correct homework") {
-  //    val hwExec = new HomeworkExecutor(student, homeworkInfo)
-  //    hwExec.gradeHomework
-  //    println("done grading.")
-  //  }
+  test("test grading correct homework") {
+    val hwExec = new HomeworkExecutor(student, homeworkInfo)
+    hwExec.gradeHomework
+    assert(IO.exists(hwExec.feedbackFilePath))
+  }
 
   test("test grading failed suite") {
     val hwExec = new HomeworkExecutor(student, homeworkInfoIncorrect)
     hwExec.gradeHomework
-    println("done grading.")
+    assert(IO.exists(hwExec.feedbackFilePath))
   }
 }
