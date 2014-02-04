@@ -74,24 +74,30 @@ class HomeworkExecutor(val student: Student, val homework: HomeworkInfo) {
       IO.writeToFile(homework.gradingTestContents, gradingTestFilePath)
     }
 
-    writeGradingTest()
-    val racketExecutor = RacketExecutor(targetHomeworkPath)
+    if (IO.exists(targetHomeworkPath)) {
+      writeGradingTest()
+      val racketExecutor = RacketExecutor(targetHomeworkPath)
 
-    //FIXME: better error handling.
-    val racketOutput = try {
-      racketExecutor.run(gradingTestFilePath)
-    } catch {
-      case rre: RacketRuntimeError => (rre.out, rre.err)
-      case rcof: RacketCannotOpenFileError => (rcof.out, rcof.err)
-      case rce: RacketCompilationError => (rce.out, rce.err)
-      case e: Exception => {
-        val error = "failed to clone repository for student: " + student.toString + "\nReason:\n" + e.getMessage() + "\n\n"
-        System.err.println(error)
-        (List(e.getMessage), List(e.getMessage))
+      //FIXME: better error handling.
+      val racketOutput = try {
+        racketExecutor.run(gradingTestFilePath)
+      } catch {
+        case rre: RacketRuntimeError => (rre.out, rre.err)
+        case rcof: RacketCannotOpenFileError => (rcof.out, rcof.err)
+        case rce: RacketCompilationError => (rce.out, rce.err)
+        case e: Exception => {
+          val error = "failed to clone repository for student: " + student.toString + "\nReason:\n" + e.getMessage() + "\n\n"
+          System.err.println(error)
+          (List(e.getMessage), List(e.getMessage))
+        }
       }
+      writeReport(racketOutput._1, racketOutput._2)
+      cleanUpUselessFiles()
+    } else {
+      //FIXME: create a log file to write allthese kinds of things.
+      System.err.println("Student: " + student.toString + "\t has not submitted homework.")
     }
-    writeReport(racketOutput._1, racketOutput._2)
-    cleanUpUselessFiles()
+
   }
 
   def addAndCommitFeedbackFile() {

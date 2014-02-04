@@ -15,6 +15,7 @@ class UserCommandInterpreter extends UserCommandVisitor {
   }
 
   override def visit(help: HelpCommand): UserCommandVisitorResult = {
+    //TODO: implement help
     println("TODO, implement help.")
     UserCommandVisitorSuccess()
   }
@@ -67,6 +68,7 @@ class UserCommandInterpreter extends UserCommandVisitor {
     def helper(students: List[Student], homeworkInfo: HomeworkInfo): UserCommandVisitorResult = {
       val hwExecs = students map { s => new HomeworkExecutor(s, homeworkInfo) }
       hwExecs foreach { _.grabHomework }
+      println("done grabbing.")
       UserCommandVisitorSuccess()
     }
     checkBeforeVisit(helper)
@@ -75,7 +77,11 @@ class UserCommandInterpreter extends UserCommandVisitor {
   override def visit(gradeAll: GradeAllCommand): UserCommandVisitorResult = {
     def helper(students: List[Student], homeworkInfo: HomeworkInfo): UserCommandVisitorResult = {
       val hwExecs = students map { s => new HomeworkExecutor(s, homeworkInfo) }
-      hwExecs foreach { _.gradeHomework }
+      hwExecs foreach { s =>
+        println("grading: " + s.student.toString)
+        s.gradeHomework
+      }
+      println("done grading.")
       UserCommandVisitorSuccess()
     }
     checkBeforeVisit(helper)
@@ -85,6 +91,7 @@ class UserCommandInterpreter extends UserCommandVisitor {
     def helper(students: List[Student], homeworkInfo: HomeworkInfo): UserCommandVisitorResult = {
       val hwExecs = students map { s => new HomeworkExecutor(s, homeworkInfo) }
       hwExecs foreach { _.addAndCommitFeedbackFile }
+      println("done adding.")
       UserCommandVisitorSuccess()
     }
     checkBeforeVisit(helper)
@@ -94,6 +101,7 @@ class UserCommandInterpreter extends UserCommandVisitor {
     def helper(students: List[Student], homeworkInfo: HomeworkInfo): UserCommandVisitorResult = {
       val hwExecs = students map { s => new HomeworkExecutor(s, homeworkInfo) }
       hwExecs foreach { _.pushFeedbackFile }
+      println("done pushing.")
       UserCommandVisitorSuccess()
     }
     checkBeforeVisit(helper)
