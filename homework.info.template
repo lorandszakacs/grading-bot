@@ -15,8 +15,8 @@ imports: rackunit "hw01-tests.rkt" "test-infrastructure.rkt"
 #name of the feedback file
 feedback-file-name: feedback.md
 
-#list of files to be copied. Please use absolute paths
+#list of files to be copied. These paths are relative to the `path-where-to-download` specified in `application.conf`
 files-to-copy:
-+ /Users/lorand/Workspace/teaching/homework/homework01/answer-sheet/hw01-tests.rkt
-+ /Users/lorand/Workspace/teaching/homework/homework01/answer-sheet/test-infrastructure.rkt
-+ /Users/lorand/Workspace/teaching/homework/homework01/answer-sheet/util-lib.rkt
++ zz-to-copy-hw01/hw01-tests.rkt
++ zz-to-copy-hw01/test-infrastructure.rkt
++ zz-to-copy-hw01/util-lib.rkt
