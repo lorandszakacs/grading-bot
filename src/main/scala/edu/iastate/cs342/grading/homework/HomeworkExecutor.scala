@@ -9,7 +9,74 @@ import edu.iastate.cs342.grading.racket.RacketCannotOpenFileError
 import edu.iastate.cs342.grading.racket.RacketCompilationError
 import edu.iastate.cs342.grading.git.GitCloneFailed
 
+private object FeedbackFile {
+  final val DefaultNoAnswerString = "N/A"
+}
+
+private class FeedbackFile(
+  val student: Student,
+  val homework: HomeworkInfo,
+  val results: List[String],
+  val out: List[String],
+  val err: List[String]) {
+
+  private val TopLevelTemplate =
+    //here we should put netID and homework-name
+    "# Feedback file for `%s` submitted by `%s %s %s`\n\n" +
+      "# TA/Instructor feedback: \n\nHomework has not been manually inspected yet, please standby.\n\n" +
+      "##### Final score after manual inspection: **todo**\n\n" +
+      //after the summary we introduce the TestSuiteSummaryTemplate String
+      "# Summary of results: \n%s\n\n\n" +
+      "# Standard output of program: \n%s\n\n\n" +
+      "# Standard error of program (includes failed tests report): \n%s\n\n\n"
+
+  private val TestSuiteSummaryEntryTemplate =
+    "test suite: %s\n" +
+      "    failed tests:    %s\n" +
+      "    test score:      %s\n" +
+      "    adjusted score:  **todo**\n" +
+      "    max possible:    %s\n"
+
+  private val TestSuiteSummaryTemplate =
+    "%s\n" +
+      "##### Total score from grading bot: %s"
+
+  /**
+   * a string containing a feedback file content build according to this template
+   */
+  lazy val fileContent: String = {
+    val suitesAndResults = homework.testSuites.zip(results)
+    var totalScore = 0
+    val testResultSummary = suitesAndResults map { pair =>
+      val suite = pair._1
+      val failedTests = pair._2
+      val possibleScore = suite.scoreValue
+      val obtainedScore =
+        if (!failedTests.equals(0.toString))
+          0
+        else { totalScore += possibleScore; possibleScore }
+
+      TestSuiteSummaryEntryTemplate.format(
+        suite.name,
+        failedTests,
+        obtainedScore.toString,
+        suite.scoreValue.toString)
+    }
+    val testSummary = TestSuiteSummaryTemplate.format(testResultSummary.mkString("\n"), totalScore.toString)
+
+    TopLevelTemplate.format(
+      homework.homeworkName,
+      student.netID,
+      student.firstName,
+      student.lastName,
+      testSummary,
+      out.mkString("\n"),
+      err.mkString("\n"))
+  }
+}
+
 class HomeworkExecutor(val student: Student, val homework: HomeworkInfo) {
+
   val GradingTestName = "grading-test.rkt"
   val CompiledFolderName = "compiled"
 
@@ -30,80 +97,60 @@ class HomeworkExecutor(val student: Student, val homework: HomeworkInfo) {
     }
   }
 
-  def gradeHomework() {
+  def gradeHomework(): String = {
     def cleanUpUselessFiles() {
       //since the grading test isn't pushed we might as well keep it there for now.
       IO.deleteFolder(IO.concatPath(targetHomeworkPath, CompiledFolderName))
     }
 
-    def writeReport(out: List[String], err: List[String]) {
-      def parseResults: String = {
+    def writeReport(out: List[String], err: List[String]): String = {
+      val resultsOfGrading: List[String] = {
         val resultLine = out.filter(s => s.contains(homework.ResultMarker))
         if (resultLine.length == 1) {
           val filteredResults = (resultLine(0).dropWhile(c => c != '\''))
           val resultsAsStrings = filteredResults.split(" ").map(s => s.filterNot(c => ((c == '\'') || (c == '(') || (c == ')'))))
-          val results = resultsAsStrings.map(_.toInt)
-          val temp = results.length
-          val zipped = homework.testSuites.zip(results)
-          //FIXME: remove this mutable variable, I was in a rush when I added it
-          var score = 0
-          val returnVal = zipped.map(p => {
-            val testName = p._1.name
-            val possibleScore = p._1.scoreValue
-            val failedTests = p._2
-            val obtainedScore = if (failedTests != 0) 0 else { score += possibleScore; possibleScore }
-            "testSuiteName: %s\n".format(testName) +
-              "\tfailedTests: %d\n".format(failedTests) +
-              "\tscore: %d\n".format(obtainedScore)
-          }).toList
-          returnVal.mkString("\n") + "##### Total score from grading bot: " + score + "\n"
+          resultsAsStrings.toList
         } else {
-          val returnVal = homework.testSuites map { suite =>
-            "testSuiteName: %s\n".format(suite.name) +
-              "\tfailedTests: N/A\n" +
-              "\tscore: N/A\n"
-          }
-          returnVal.mkString("\n") + "##### Total score from grading bot: N/A" + "\n"
+          List.fill(homework.testSuites.length)(FeedbackFile.DefaultNoAnswerString)
         }
       }
-      val toDump = out.mkString("\n") + err.mkString("\n")
-      val toWrite = new StringBuffer
-      toWrite.append("# TA/Instructor feedback: \n\n\n")
-      toWrite.append("##### Final score after manual inspection: TODO\n\n")
-      toWrite.append("# Summary of unit testing results: \n")
-      toWrite.append(parseResults)
-      toWrite.append("\n\n\n# Test output: \n")
-      toWrite.append(toDump)
-      IO.writeToFile(toWrite.toString, feedbackFilePath)
+      val feedbackFile = new FeedbackFile(student, homework, resultsOfGrading, out, err)
+      IO.writeToFile(feedbackFile.fileContent, feedbackFilePath)
+      feedbackFile.fileContent
     }
+
     def writeGradingTest() {
       IO.writeToFile(homework.gradingTestContents, gradingTestFilePath)
     }
 
-    if (IO.exists(targetHomeworkPath)) {
-      writeGradingTest()
-      val racketExecutor = RacketExecutor(targetHomeworkPath)
-
-      //FIXME: better error handling.
-      val racketOutput = try {
-        racketExecutor.run(gradingTestFilePath)
-      } catch {
-        case rre: RacketRuntimeError => (rre.out, rre.err)
-        case rcof: RacketCannotOpenFileError => (rcof.out, rcof.err)
-        case rce: RacketCompilationError => (rce.out, rce.err)
-        case e: Exception => {
-          val error = "failed to clone repository for student: " + student.toString + "\nReason:\n" + e.getMessage() + "\n\n"
-          System.err.println(error)
-          (List(e.getMessage), List(e.getMessage))
-        }
+    val racketOutput = try {
+      val submittedHomework: Boolean = {
+        //TODO: write a more sophisticated check
+        IO.exists(targetHomeworkPath)
       }
-      writeReport(racketOutput._1, racketOutput._2)
-      cleanUpUselessFiles()
-    } else {
-      //FIXME: create a log file to write allthese kinds of things.
-      System.err.println("Student: " + student.toString + "\t has not submitted homework.")
+      
+      if (submittedHomework) {
+        writeGradingTest()
+        val racketExecutor = RacketExecutor(targetHomeworkPath)
+        racketExecutor.run(gradingTestFilePath)
+      } else {
+        System.err.println("Student: " + student.toString + "\t has not submitted homework.")
+        (List(), List())
+      }
+    } catch {
+      //FIXME: better error handling.
+      case rre: RacketRuntimeError => (rre.out, rre.err)
+      case rcof: RacketCannotOpenFileError => (rcof.out, rcof.err)
+      case rce: RacketCompilationError => (rce.out, rce.err)
+      case e: Exception => {
+        val error = "failed to run racket program for student: " + student.toString + "\nReason:\n" + e.getMessage() + "\n\n"
+        System.err.println(error)
+        (List(e.getMessage), List(e.getMessage))
+      }
     }
-
+    val report = writeReport(racketOutput._1, racketOutput._2)
+    cleanUpUselessFiles()
+    report
   }
 
   def addAndCommitFeedbackFile() {

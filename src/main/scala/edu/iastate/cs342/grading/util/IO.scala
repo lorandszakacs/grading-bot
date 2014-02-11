@@ -94,6 +94,8 @@ object IO {
 
   def createFile(filePath: String): String = {
     val newFile = FileUtils.getFile(filePath)
+    val parentDir = newFile.getParent()
+    IO.createFolder(parentDir)
     assume(newFile.createNewFile(), "could not create file: %".format(filePath))
     newFile.setExecutable(true)
     newFile.setReadable(true)
@@ -168,9 +170,10 @@ object IO {
   }
 
   def writeToFile(data: Array[Char], fileName: String) {
-    val out = new BufferedWriter(new FileWriter(FileUtils.getFile(fileName)));
-    out.write(data);
-    out.flush();
+    val file = IO.createFile(fileName) 
+    val out = new BufferedWriter(new FileWriter(file))
+    out.write(data)
+    out.flush()
     out.close();
   }
 
