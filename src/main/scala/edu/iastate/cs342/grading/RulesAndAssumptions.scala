@@ -31,4 +31,6 @@ object RulesAndAssumptions {
   val GradingTestName = "grading-test.rkt"
 
   val DefaultStudentsFile = "students.txt"
+    
+  val DefaultHomeworkInfoFile = "homework.info"
 }

@@ -1,6 +1,7 @@
 package edu.iastate.cs342.grading.repl
 
 import scala.util.parsing.combinator.RegexParsers
+import edu.iastate.cs342.grading.RulesAndAssumptions
 
 sealed trait UserCommand {
   def instructions: String
@@ -19,8 +20,7 @@ private object UserCommand {
     val Help = "help"
     val Exit = "exit"
   }
-  val DefaultStudentsFile = "students.txt"
-  val DefaultHomeworkInfoFile = "homework.info"
+  
 }
 
 case class Fail(val msg: String) extends UserCommand {
@@ -77,7 +77,7 @@ object CommandParser extends RegexParsers {
   def loadStudents: Parser[UserCommand] = UserCommand.Keywords.LoadStudents ~ fileNamePattern.? ^^ {
     case _ ~ fileName => {
       fileName match {
-        case None => LoadStudents(UserCommand.DefaultStudentsFile)
+        case None => LoadStudents(RulesAndAssumptions.DefaultStudentsFile)
         case Some(fn) => LoadStudents(fn)
       }
     }
@@ -86,7 +86,7 @@ object CommandParser extends RegexParsers {
   def loadHomeworkInfo: Parser[UserCommand] = UserCommand.Keywords.LoadHomeworkInfo ~ fileNamePattern.? ^^ {
     case _ ~ fileName => {
       fileName match {
-        case None => LoadHomeworkInfo(UserCommand.DefaultHomeworkInfoFile)
+        case None => LoadHomeworkInfo(RulesAndAssumptions.DefaultHomeworkInfoFile)
         case Some(fn) => LoadHomeworkInfo(fn)
       }
     }
