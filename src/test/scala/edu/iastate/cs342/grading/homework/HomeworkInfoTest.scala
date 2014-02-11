@@ -10,7 +10,7 @@ import edu.iastate.cs342.grading.constants.Constants
 
 @RunWith(classOf[JUnitRunner])
 class HomeworkInfoTest extends FunSuite with BeforeAndAfterEach {
-  val testFilePath = "src/test/resources/homework-test/homework-test.info"
+  val testFilePath = "src/test/resources/homework-test/homework-info-test.info"
 
   test("Homework Info parsing") {
     val hwInfo = HomeworkInfo(testFilePath)

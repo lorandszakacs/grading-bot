@@ -8,6 +8,7 @@ import edu.iastate.cs342.grading.racket.RacketRuntimeError
 import edu.iastate.cs342.grading.racket.RacketCannotOpenFileError
 import edu.iastate.cs342.grading.racket.RacketCompilationError
 import edu.iastate.cs342.grading.git.GitCloneFailed
+import java.io.FileNotFoundException
 
 private object FeedbackFile {
   final val DefaultNoAnswerString = "N/A"
@@ -103,6 +104,15 @@ class HomeworkExecutor(val student: Student, val homework: HomeworkInfo) {
       IO.deleteFolder(IO.concatPath(targetHomeworkPath, CompiledFolderName))
     }
 
+    def copyFiles() {
+      homework.filesToCopy foreach { f =>
+        val from = f
+        val to = IO.concatPath(targetHomeworkPath, IO.getFileName(from))
+        IO.deleteFile(to)
+        IO.copyFile(from, to)
+      }
+    }
+
     def writeReport(out: List[String], err: List[String]): String = {
       val resultsOfGrading: List[String] = {
         val resultLine = out.filter(s => s.contains(HomeworkInfo.ResultMarker))
@@ -128,8 +138,9 @@ class HomeworkExecutor(val student: Student, val homework: HomeworkInfo) {
         //TODO: write a more sophisticated check
         IO.exists(targetHomeworkPath)
       }
-      
+
       if (submittedHomework) {
+        copyFiles()
         writeGradingTest()
         val racketExecutor = RacketExecutor(targetHomeworkPath)
         racketExecutor.run(gradingTestFilePath)
@@ -142,8 +153,13 @@ class HomeworkExecutor(val student: Student, val homework: HomeworkInfo) {
       case rre: RacketRuntimeError => (rre.out, rre.err)
       case rcof: RacketCannotOpenFileError => (rcof.out, rcof.err)
       case rce: RacketCompilationError => (rce.out, rce.err)
+      case fnfe: FileNotFoundException => {
+        val error = "failed to copy files for student: " + student.toString + "\nReason:\n" + fnfe.getMessage() + "\n\n"
+        System.err.println(error)
+        (List(fnfe.getMessage), List(fnfe.getMessage))
+      }
       case e: Exception => {
-        val error = "failed to run racket program for student: " + student.toString + "\nReason:\n" + e.getMessage() + "\n\n"
+        val error = "failed to grade homework for student: " + student.toString + "\nReason:\n" + e.getMessage() + "\n\n"
         System.err.println(error)
         (List(e.getMessage), List(e.getMessage))
       }
