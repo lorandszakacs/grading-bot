@@ -26,23 +26,23 @@ class HomeworkExecutorTest extends FunSuite with BeforeAndAfterEach {
     IO.deleteFolder(student.repoFolderPath)
   }
 
-//  test("test grading correct homework") {
-//    val hwExec = new HomeworkExecutor(student, homeworkInfo)
-//    val report = hwExec.gradeHomework
-//    assert(IO.exists(hwExec.feedbackFilePath))
-//  }
-//
-//  test("test grading failed suite") {
-//    val hwExec = new HomeworkExecutor(student, homeworkInfoIncorrect)
-//    val report = hwExec.gradeHomework
-//    assert(IO.exists(hwExec.feedbackFilePath))
-//  }
-//
-//  test("test grading on homework that is not submitted") {
-//    val hwExec = new HomeworkExecutor(student, homeworkInfoNotSubmitted)
-//    val report = hwExec.gradeHomework
-//    assert(IO.exists(hwExec.feedbackFilePath))
-//  }
+  test("test grading correct homework") {
+    val hwExec = new HomeworkExecutor(student, homeworkInfo)
+    val report = hwExec.gradeHomework
+    assert(IO.exists(hwExec.feedbackFilePath))
+  }
+
+  test("test grading failed suite") {
+    val hwExec = new HomeworkExecutor(student, homeworkInfoIncorrect)
+    val report = hwExec.gradeHomework
+    assert(IO.exists(hwExec.feedbackFilePath))
+  }
+
+  test("test grading on homework that is not submitted") {
+    val hwExec = new HomeworkExecutor(student, homeworkInfoNotSubmitted)
+    val report = hwExec.gradeHomework
+    assert(IO.exists(hwExec.feedbackFilePath))
+  }
 
   test("test grading on homework that was submitted empty") {
     val hwExec = new HomeworkExecutor(student, homeworkInfoEmptySubmission)
