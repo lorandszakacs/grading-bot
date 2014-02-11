@@ -105,7 +105,7 @@ class HomeworkExecutor(val student: Student, val homework: HomeworkInfo) {
 
     def writeReport(out: List[String], err: List[String]): String = {
       val resultsOfGrading: List[String] = {
-        val resultLine = out.filter(s => s.contains(homework.ResultMarker))
+        val resultLine = out.filter(s => s.contains(HomeworkInfo.ResultMarker))
         if (resultLine.length == 1) {
           val filteredResults = (resultLine(0).dropWhile(c => c != '\''))
           val resultsAsStrings = filteredResults.split(" ").map(s => s.filterNot(c => ((c == '\'') || (c == '(') || (c == ')'))))

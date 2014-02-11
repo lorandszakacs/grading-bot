@@ -17,6 +17,6 @@ feedback-file-name: feedback.md
 
 #list of files to be copied. Please use absolute paths
 files-to-copy:
-* /Users/lorand/Workspace/teaching/homework/homework01/answer-sheet/hw01-tests.rkt
-* /Users/lorand/Workspace/teaching/homework/homework01/answer-sheet/test-infrastructure.rkt
-* /Users/lorand/Workspace/teaching/homework/homework01/answer-sheet/util-lib.rkt
++ /Users/lorand/Workspace/teaching/homework/homework01/answer-sheet/hw01-tests.rkt
++ /Users/lorand/Workspace/teaching/homework/homework01/answer-sheet/test-infrastructure.rkt
++ /Users/lorand/Workspace/teaching/homework/homework01/answer-sheet/util-lib.rkt

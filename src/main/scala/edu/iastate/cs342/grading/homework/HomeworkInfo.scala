@@ -1,20 +1,46 @@
 package edu.iastate.cs342.grading.homework
 
 import edu.iastate.cs342.grading.util.IO
+import edu.iastate.cs342.grading.constants.Constants
 
-class TestSuiteInfo private (val name: String, val scoreValue: Int) {
+class TestSuiteInfo private (val name: String, val scoreValue: Int) extends Equals {
   override lazy val toString = "%s = %d points".format(name, scoreValue)
+
+  def canEqual(other: Any) = {
+    other.isInstanceOf[edu.iastate.cs342.grading.homework.TestSuiteInfo]
+  }
+
+  override def equals(other: Any) = {
+    other match {
+      case that: edu.iastate.cs342.grading.homework.TestSuiteInfo => that.canEqual(TestSuiteInfo.this) && name == that.name && scoreValue == that.scoreValue
+      case _ => false
+    }
+  }
+
+  override def hashCode() = {
+    val prime = 41
+    prime * (prime + name.hashCode) + scoreValue.hashCode
+  }
 }
 
-object TestSuiteInfo {
+private object TestSuiteInfo {
   def apply(testSuiteLine: String) = {
     val split = testSuiteLine.split(" ")
     new TestSuiteInfo(split(0), split(1).toInt)
   }
+
+  def apply(name: String, scoreValue: Int) = {
+    new TestSuiteInfo(name, scoreValue)
+  }
 }
 
-class HomeworkInfo private (val testSuites: List[TestSuiteInfo], val imports: List[String], val homeworkName: String, val feedbackFileName: String) {
-  final val ResultMarker = "###&&&***results: "
+private object FileToCopy {
+  def apply(fileToCopyLine: String): String = {
+    IO.concatPath(Constants.ConfigValues.PathWhereToDownload, fileToCopyLine.drop(2))
+  }
+}
+
+class HomeworkInfo private (val testSuites: List[TestSuiteInfo], val imports: List[String], val filesToCopy: List[String], val homeworkName: String, val feedbackFileName: String) {
 
   /**
    * example:
@@ -39,7 +65,7 @@ class HomeworkInfo private (val testSuites: List[TestSuiteInfo], val imports: Li
       importLines + "\n" +
       "(define results (list\n" +
       testLines + "))\n" +
-      "(print \"%s\")\n".format(ResultMarker) +
+      "(print \"%s\")\n".format(HomeworkInfo.ResultMarker) +
       "(print results)"
   }
 }
@@ -50,11 +76,14 @@ class HomeworkInfo private (val testSuites: List[TestSuiteInfo], val imports: Li
  * This should be rewritten to use a regex parser similar to how the REPL is built.
  */
 object HomeworkInfo {
+  final val ResultMarker = "###&&&***results: "
+
   private val CommentMarker = "#"
   private val TestSuiteMarker = "*"
   private val HomeworkNameMarker = "homework-name: "
   private val ImportsMarker = "imports: "
   private val FeedbackFileNameMarker = "feedback-file-name: "
+  private val FileToCopyMarker = "+"
 
   def apply(filePath: String): HomeworkInfo = {
     val lines = IO.readLines(filePath).filterNot(_.startsWith(CommentMarker))
@@ -75,6 +104,8 @@ object HomeworkInfo {
     assert(feedBackFileLines.length == 1, "There should be only one line of feedback file name.")
     val feedbackFileName = feedBackFileLines(0).drop(FeedbackFileNameMarker.length)
 
-    new HomeworkInfo(testSuites, imports, homeworkName, feedbackFileName)
+    val filesToCopyLines = lines.filter(_.startsWith(FileToCopyMarker))
+    val filesToCopy = filesToCopyLines.map(FileToCopy(_))
+    new HomeworkInfo(testSuites, imports, filesToCopy, homeworkName, feedbackFileName)
   }
 }

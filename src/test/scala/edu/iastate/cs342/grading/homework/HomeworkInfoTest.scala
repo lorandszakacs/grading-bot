@@ -6,6 +6,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import edu.iastate.cs342.grading.util.IO
 import scala.sys.process._
+import edu.iastate.cs342.grading.constants.Constants
 
 @RunWith(classOf[JUnitRunner])
 class HomeworkInfoTest extends FunSuite with BeforeAndAfterEach {
@@ -16,14 +17,19 @@ class HomeworkInfoTest extends FunSuite with BeforeAndAfterEach {
 
     val expectedName = "homework-test"
     assert(hwInfo.homeworkName === expectedName)
-    
+
     val expectedFeedbackFileName = "feedback.md"
     assert(hwInfo.feedbackFileName === expectedFeedbackFileName)
 
-    val expectedSuites = List(("part-one-test-suite", 35), ("18-series-a-test-suite", 15), ("18-series-b-test-suite", 15))
+    val expectedSuites = List(TestSuiteInfo("part-one-test-suite", 35),
+      TestSuiteInfo("18-series-a-test-suite", 15),
+      TestSuiteInfo("18-series-b-test-suite", 15))
     assert(hwInfo.testSuites === expectedSuites)
     val expectedImports = List("rackunit", "\"hw01-tests.rkt\"", "\"test-infrastructure.rkt\"")
     assert(hwInfo.imports === expectedImports)
+
+    val expectedToCopies = List("zz-to-copy/hw01-tests.rkt", "zz-to-copy/test-infrastructure.rkt", "zz-to-copy/util-lib.rkt") map { s => IO.concatPath(Constants.ConfigValues.PathWhereToDownload, s) }
+    assert(hwInfo.filesToCopy === expectedToCopies)
 
   }
 
@@ -37,7 +43,7 @@ class HomeworkInfoTest extends FunSuite with BeforeAndAfterEach {
       "(test part-one-test-suite)\n" +
       "(test 18-series-a-test-suite)\n" +
       "(test 18-series-b-test-suite)))\n" +
-      "(print \"results: \")\n" +
+      "(print \"%s\")\n".format(HomeworkInfo.ResultMarker) +
       "(print results)"
     assert(hwInfo.gradingTestContents === expectedValue)
   }
