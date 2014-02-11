@@ -2,6 +2,7 @@ package edu.iastate.cs342.grading.homework
 
 import edu.iastate.cs342.grading.util.IO
 import edu.iastate.cs342.grading.constants.Constants
+import edu.iastate.cs342.grading.RulesAndAssumptions
 
 class TestSuiteInfo private (val name: String, val scoreValue: Int) extends Equals {
   override lazy val toString = "%s = %d points".format(name, scoreValue)
@@ -36,7 +37,7 @@ private object TestSuiteInfo {
 
 private object FileToCopy {
   def apply(fileToCopyLine: String): String = {
-    IO.concatPath(Constants.ConfigValues.PathWhereToDownload, fileToCopyLine.drop(2))
+    RulesAndAssumptions.createFilesToCopyPath(fileToCopyLine.drop(2))
   }
 }
 

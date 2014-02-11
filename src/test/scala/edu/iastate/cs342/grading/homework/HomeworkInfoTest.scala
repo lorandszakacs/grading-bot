@@ -7,6 +7,7 @@ import org.scalatest.junit.JUnitRunner
 import edu.iastate.cs342.grading.util.IO
 import scala.sys.process._
 import edu.iastate.cs342.grading.constants.Constants
+import edu.iastate.cs342.grading.RulesAndAssumptions
 
 @RunWith(classOf[JUnitRunner])
 class HomeworkInfoTest extends FunSuite with BeforeAndAfterEach {
@@ -28,7 +29,7 @@ class HomeworkInfoTest extends FunSuite with BeforeAndAfterEach {
     val expectedImports = List("rackunit", "\"hw01-tests.rkt\"", "\"test-infrastructure.rkt\"")
     assert(hwInfo.imports === expectedImports)
 
-    val expectedToCopies = List("zz-to-copy/hw01-tests.rkt", "zz-to-copy/test-infrastructure.rkt", "zz-to-copy/util-lib.rkt") map { s => IO.concatPath(Constants.ConfigValues.PathWhereToDownload, s) }
+    val expectedToCopies = List("zz-to-copy/hw01-tests.rkt", "zz-to-copy/test-infrastructure.rkt", "zz-to-copy/util-lib.rkt") map { s => RulesAndAssumptions.createFilesToCopyPath(s) }
     assert(hwInfo.filesToCopy === expectedToCopies)
 
   }

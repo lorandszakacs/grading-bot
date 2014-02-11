@@ -25,6 +25,11 @@ object RulesAndAssumptions {
    * Repositories will be saved to a subfolder of the folder pointed to in the application.conf file
    */
   def createRepoFileSystemLocationFromStudentID(netID: String) = IO.concatPath(Constants.ConfigValues.PathWhereToDownload, netID)
+  
+  /**
+   * The paths to files that are copied to each homework folder before grading are created by this function.  
+   */
+  def createFilesToCopyPath(pathFromInfoFile: String) = IO.concatPath(Constants.ConfigValues.PathWhereToDownload, pathFromInfoFile)
 
   val StudentSolutionFolder = "my-solutions"
 
