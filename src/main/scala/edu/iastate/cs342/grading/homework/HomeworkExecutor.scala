@@ -56,15 +56,21 @@ class HomeworkExecutor(val student: Student, val homework: HomeworkInfo) {
               "\tfailedTests: %d\n".format(failedTests) +
               "\tscore: %d\n".format(obtainedScore)
           }).toList
-          returnVal.mkString("\n") + "##### Total score: " + score + "\n"
+          returnVal.mkString("\n") + "##### Total score from grading bot: " + score + "\n"
         } else {
-          out.mkString("\n")
+          val returnVal = homework.testSuites map { suite =>
+            "testSuiteName: %s\n".format(suite.name) +
+              "\tfailedTests: N/A\n" +
+              "\tscore: N/A\n"
+          }
+          returnVal.mkString("\n") + "##### Total score from grading bot: N/A" + "\n"
         }
       }
       val toDump = out.mkString("\n") + err.mkString("\n")
       val toWrite = new StringBuffer
       toWrite.append("# TA/Instructor feedback: \n\n\n")
-      toWrite.append("# Sumary of results: \n")
+      toWrite.append("##### Final score after manual inspection: TODO\n\n")
+      toWrite.append("# Summary of unit testing results: \n")
       toWrite.append(parseResults)
       toWrite.append("\n\n\n# Test output: \n")
       toWrite.append(toDump)
@@ -101,10 +107,15 @@ class HomeworkExecutor(val student: Student, val homework: HomeworkInfo) {
   }
 
   def addAndCommitFeedbackFile() {
+    val defaultMessage = "Added %s file for %s".format(homework.feedbackFileName, homework.homeworkName)
+    this.addAndCommitFeedbackFile(defaultMessage)
+  }
+
+  def addAndCommitFeedbackFile(commitMessage: String) {
     val gitRepoExec = GitRepositoryExecutor(student.repoFolderPath)
     try {
       gitRepoExec.add(feedbackFileRelativePath)
-      gitRepoExec.commit("Added feedback.md file for " + homework.homeworkName)
+      gitRepoExec.commit("Added %s file for %s".format(homework.feedbackFileName, homework.homeworkName))
     } catch {
       case e: Exception => {
         val error = "failed to add the feedbackfile for student: " + student.toString + "\nReason:\n" + e.getMessage() + "\n\n"
