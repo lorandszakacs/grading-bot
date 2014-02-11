@@ -47,7 +47,6 @@ class HomeworkExecutorTest extends FunSuite with BeforeAndAfterEach {
   test("test grading on homework that was submitted empty") {
     val hwExec = new HomeworkExecutor(student, homeworkInfoEmptySubmission)
     val report = hwExec.gradeHomework
-    println(report)
     assert(IO.exists(hwExec.feedbackFilePath))
   }
 }
