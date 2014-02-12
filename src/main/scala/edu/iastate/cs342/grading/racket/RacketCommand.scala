@@ -35,7 +35,7 @@ private class RacketRun(fileToRun: String, override val rootFolder: String) exte
  *FIXME: the messageToAddStringBuilder is a lazy way of communicating that the process was killed
  * best way to go about solving this would be to make the RacketExecutor an actor as well. 
  */
-class TerminationMonitor(val fileRun: String, val messageToAdd: StringBuilder) extends Actor {
+class TerminationMonitor(val fileRun: String) extends Actor {
   private class PsAuxCommand() extends SystemCommand {
     override val rootFolder = "."
     override val fullCommandToExecute = "ps"
@@ -48,28 +48,29 @@ class TerminationMonitor(val fileRun: String, val messageToAdd: StringBuilder) e
     override val commandSequence: Seq[String] = Seq(fullCommandToExecute, "-9", pid)
   }
 
-  def act() {
+  override def act() {
     receiveWithin(RulesAndAssumptions.TimeoutOfRacketPrograms) {
+      case TerminationMonitor.Stop => { println("stopping %s".format(fileRun)) }
       case TIMEOUT => {
-        System.err.println("Trying to kill process for: " + fileRun)
         val ps = new PsAuxCommand
-        val output = ps.execute._1.filter(s => s.contains(Constants.ConfigValues.PathToRacket))
+        val output = ps.execute._1.filter(s => s.contains(fileRun))
         if (output.length == 0) {
-          System.err.println("Somehow we couldn't find the fucking process. Stupid actor framework screwed up sending the message")
+          // FIXME: this branch is intentionally left empty. It is only taken because of what I deem to be a bug.
+          // roughly 4/45 times this actor never receives the Stop message even though it is *definitely* sent.
+          // so we just ignore this case.
         } else {
           if (output.length > 1) {
             System.err.println("TerminationMonitor found more than one matching process. Terminating only one of them THIS SHOULD NEVER HAPPEN.")
           }
+          System.err.println("Trying to kill process for: " + fileRun)
           val upToPID = output(0).dropWhile(c => !c.isDigit)
           val afterPIDIndex = upToPID.indexWhere(c => !c.isDigit)
           val pid = upToPID.substring(0, afterPIDIndex)
           val kill = new KillCommand(pid)
-          messageToAdd.append("THE HOMEWORK DID NOT TERMINATE!!!!! YOU ARE TEARING ME APART! AHFSHDFJHfddnfdsnvdjvnal1039i1...")
           kill.execute
-          System.err.println("Process %s succesfully killed".format(pid))
+          System.err.println("Killed with no mercy: %s".format(output(0)))
         }
       }
-      case TerminationMonitor.Stop => Unit
     }
   }
 }
@@ -81,12 +82,13 @@ object TerminationMonitor {
 class RacketExecutor private (val rootFolder: String) {
   def run(fileToRun: String): (List[String], List[String]) = {
     val racketRun = new RacketRun(fileToRun, rootFolder)
-    val messageFromMonitor = new StringBuilder("")
-    val terminationMonitor = new TerminationMonitor(fileToRun, messageFromMonitor)
+    val terminationMonitor = new TerminationMonitor(fileToRun)
     terminationMonitor.start
     val resultTemp = racketRun.execute()
+
     terminationMonitor ! TerminationMonitor.Stop
-    (resultTemp._1, resultTemp._2 :+ messageFromMonitor.toString)
+
+    (resultTemp._1, resultTemp._2)
   }
 
   def deleteFolder() {

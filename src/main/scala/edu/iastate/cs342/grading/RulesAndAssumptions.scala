@@ -39,7 +39,7 @@ object RulesAndAssumptions {
    * Timeout of RacketPrograms before they are labeled as "non-terminating".
    * It is represented in milliseconds.
    */
-  val TimeoutOfRacketPrograms = 20000
+  val TimeoutOfRacketPrograms = 10000
 
   val StudentSolutionFolder = "my-solutions"
 
