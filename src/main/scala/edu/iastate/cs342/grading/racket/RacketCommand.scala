@@ -54,14 +54,20 @@ class TerminationMonitor(val fileRun: String, val messageToAdd: StringBuilder) e
         System.err.println("Trying to kill process for: " + fileRun)
         val ps = new PsAuxCommand
         val output = ps.execute._1.filter(s => s.contains(Constants.ConfigValues.PathToRacket))
-        assert(output.length == 1, "TerminationMonitor found more than one matching process.")
-        val upToPID = output(0).dropWhile(c => !c.isDigit)
-        val afterPIDIndex = upToPID.indexWhere(c => !c.isDigit)
-        val pid = upToPID.substring(0, afterPIDIndex)
-        val kill = new KillCommand(pid)
-        messageToAdd.append("THE HOMEWORK DID NOT TERMINATE!!!!! YOU ARE TEARING ME APART! AHFSHDFJHfddnfdsnvdjvnal1039i1...")
-        kill.execute
-        System.err.println("Process %s succesfully killed".format(pid))
+        if (output.length == 0) {
+          System.err.println("Somehow we couldn't find the fucking process. Stupid actor framework screwed up sending the message")
+        } else {
+          if (output.length > 1) {
+            System.err.println("TerminationMonitor found more than one matching process. Terminating only one of them THIS SHOULD NEVER HAPPEN.")
+          }
+          val upToPID = output(0).dropWhile(c => !c.isDigit)
+          val afterPIDIndex = upToPID.indexWhere(c => !c.isDigit)
+          val pid = upToPID.substring(0, afterPIDIndex)
+          val kill = new KillCommand(pid)
+          messageToAdd.append("THE HOMEWORK DID NOT TERMINATE!!!!! YOU ARE TEARING ME APART! AHFSHDFJHfddnfdsnvdjvnal1039i1...")
+          kill.execute
+          System.err.println("Process %s succesfully killed".format(pid))
+        }
       }
       case TerminationMonitor.Stop => Unit
     }

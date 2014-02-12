@@ -48,6 +48,7 @@ class UserCommandInterpreter extends UserCommandVisitor {
       val tempStudents = studentLines.map(Student(_)).toList
       println("Loaded the following students: \n")
       println("\t" + tempStudents.mkString("\n\t"))
+      println("\t Total: " + tempStudents.length)
       this._students = Some(tempStudents)
       UserCommandVisitorSuccess()
     } catch {
@@ -67,7 +68,10 @@ class UserCommandInterpreter extends UserCommandVisitor {
   override def visit(grabAll: GrabAllCommand): UserCommandVisitorResult = {
     def helper(students: List[Student], homeworkInfo: HomeworkInfo): UserCommandVisitorResult = {
       val hwExecs = students map { s => new HomeworkExecutor(s, homeworkInfo) }
-      hwExecs foreach { _.grabHomework }
+      hwExecs foreach { he =>
+        println("cloning %s ".format(he.student.repoURL))
+        he.grabHomework
+      }
       println("done grabbing.")
       UserCommandVisitorSuccess()
     }
@@ -90,7 +94,10 @@ class UserCommandInterpreter extends UserCommandVisitor {
   override def visit(addAll: AddAndCommitAllCommand): UserCommandVisitorResult = {
     def helper(students: List[Student], homeworkInfo: HomeworkInfo): UserCommandVisitorResult = {
       val hwExecs = students map { s => new HomeworkExecutor(s, homeworkInfo) }
-      hwExecs foreach { _.addAndCommitFeedbackFile }
+      hwExecs foreach { he =>
+        println("adding `%s` for %s: ".format(he.homework.feedbackFileName, he.student.netID))
+        he.addAndCommitFeedbackFile
+      }
       println("done adding.")
       UserCommandVisitorSuccess()
     }
@@ -100,7 +107,10 @@ class UserCommandInterpreter extends UserCommandVisitor {
   override def visit(pushAll: PushAll): UserCommandVisitorResult = {
     def helper(students: List[Student], homeworkInfo: HomeworkInfo): UserCommandVisitorResult = {
       val hwExecs = students map { s => new HomeworkExecutor(s, homeworkInfo) }
-      hwExecs foreach { _.pushFeedbackFile }
+      hwExecs foreach { he =>
+        println("pushing for %s: ".format(he.student.netID))
+        he.pushFeedbackFile
+      }
       println("done pushing.")
       UserCommandVisitorSuccess()
     }
