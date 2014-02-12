@@ -27,7 +27,7 @@ class RacketTest extends FunSuite with BeforeAndAfterEach {
   }
 
   test("test run racket cannot open file error") {
-    
+
   }
   test("test run racket compiler error test") {
     val racketExecutor = RacketExecutor(racketFolder)
@@ -47,5 +47,12 @@ class RacketTest extends FunSuite with BeforeAndAfterEach {
     intercept[RacketRuntimeError] {
       racketExecutor.run("test-file-runtime-error.rkt")
     }
+  }
+
+  test("test non terminating program") {
+    val racketExecutor = RacketExecutor(racketFolder)
+    val nonTerminatingProgram = "non-terminating.rkt"
+    val result = racketExecutor.run(nonTerminatingProgram)
+    assert(true)
   }
 }

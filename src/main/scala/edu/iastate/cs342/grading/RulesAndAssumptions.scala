@@ -2,6 +2,10 @@ package edu.iastate.cs342.grading
 
 import edu.iastate.cs342.grading.constants.Constants
 import edu.iastate.cs342.grading.util.IO
+import scala.concurrent.duration.Duration
+import org.scalatest.time.Second
+import org.scalatest.time.Seconds
+import org.scalatest.time.Milliseconds
 
 /**
  * @author lorand
@@ -25,17 +29,23 @@ object RulesAndAssumptions {
    * Repositories will be saved to a subfolder of the folder pointed to in the application.conf file
    */
   def createRepoFileSystemLocationFromStudentID(netID: String) = IO.concatPath(Constants.ConfigValues.PathWhereToDownload, netID)
-  
+
   /**
-   * The paths to files that are copied to each homework folder before grading are created by this function.  
+   * The paths to files that are copied to each homework folder before grading are created by this function.
    */
   def createFilesToCopyPath(pathFromInfoFile: String) = IO.concatPath(Constants.ConfigValues.PathWhereToDownload, pathFromInfoFile)
+
+  /**
+   * Timeout of RacketPrograms before they are labeled as "non-terminating".
+   * It is represented in milliseconds.
+   */
+  val TimeoutOfRacketPrograms = 20000
 
   val StudentSolutionFolder = "my-solutions"
 
   val GradingTestName = "grading-test.rkt"
 
   val DefaultStudentsFile = "students.txt"
-    
+
   val DefaultHomeworkInfoFile = "homework.info"
 }

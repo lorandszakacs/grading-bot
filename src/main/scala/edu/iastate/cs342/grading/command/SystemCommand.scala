@@ -36,6 +36,8 @@ trait SystemCommand {
    * output lines corresponding to the output, the second one is the
    * lines corresponding to the standard error of the command
    */
+  //FIXME: rewrite all of this using java.lang.runtime.ProcessBuilder to have access to the
+  //destroy() method. Hopefully that will be reliable.
   def execute(): (List[String], List[String]) = {
     val proc = createProcess
     val out = new mutable.ListBuffer[String]()
