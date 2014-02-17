@@ -1,0 +1,40 @@
+*.class
+*.log
+
+# sbt specific
+dist/*
+target/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+
+# Scala-IDE specific
+.scala_dependencies
+
+#eclipse specific
+bin/
+.settings/
+.cache
+lib/
+.classpath
+.project
+.metadata
+
+#mac specific
+.DS_Store
+
+#project setup specific
+start
+
+#grading specific
+grading/src/main/resources/application.conf
+*students.txt
+grading/test-site
+.info
+build.sbt
+
+#racket specific:
+compiled/
+*.rkt~
+*.bak
