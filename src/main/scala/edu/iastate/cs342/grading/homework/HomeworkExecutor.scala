@@ -71,8 +71,8 @@ private class FeedbackFile(
       student.firstName,
       student.lastName,
       testSummary,
-      out.mkString("\n"),
-      err.mkString("\n"))
+      out.mkString("  \n"),
+      err.mkString("  \n"))
   }
 }
 
