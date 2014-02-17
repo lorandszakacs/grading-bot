@@ -18,6 +18,9 @@ class HomeworkInfoTest extends FunSuite with BeforeAndAfterEach {
 
     val expectedName = "homework-test"
     assert(hwInfo.homeworkName === expectedName)
+    
+    val expectedExpectedFiles = List("hw01-answer-sheet.rkt")
+    assert(hwInfo.expectedFiles === expectedExpectedFiles)
 
     val expectedFeedbackFileName = "feedback.md"
     assert(hwInfo.feedbackFileName === expectedFeedbackFileName)
@@ -31,7 +34,6 @@ class HomeworkInfoTest extends FunSuite with BeforeAndAfterEach {
 
     val expectedToCopies = List("zz-to-copy/hw01-tests.rkt", "zz-to-copy/test-infrastructure.rkt", "zz-to-copy/util-lib.rkt") map { s => RulesAndAssumptions.createFilesToCopyPath(s) }
     assert(hwInfo.filesToCopy === expectedToCopies)
-
   }
 
   test("Homework Info grading-test contents") {

@@ -95,7 +95,7 @@ class UserCommandInterpreter extends UserCommandVisitor {
     def helper(students: List[Student], homeworkInfo: HomeworkInfo): UserCommandVisitorResult = {
       val hwExecs = students map { s => new HomeworkExecutor(s, homeworkInfo) }
       hwExecs foreach { he =>
-        println("adding `%s` for %s: ".format(he.homework.feedbackFileName, he.student.netID))
+        println("adding `%s` for: %s ".format(he.homework.feedbackFileName, he.student.netID))
         he.addAndCommitFeedbackFile
       }
       println("done adding.")
@@ -108,7 +108,7 @@ class UserCommandInterpreter extends UserCommandVisitor {
     def helper(students: List[Student], homeworkInfo: HomeworkInfo): UserCommandVisitorResult = {
       val hwExecs = students map { s => new HomeworkExecutor(s, homeworkInfo) }
       hwExecs foreach { he =>
-        println("pushing for %s: ".format(he.student.netID))
+        println("pushing for: %s".format(he.student.netID))
         he.pushFeedbackFile
       }
       println("done pushing.")

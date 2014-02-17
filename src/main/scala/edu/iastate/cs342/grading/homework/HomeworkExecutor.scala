@@ -24,23 +24,23 @@ private class FeedbackFile(
   private val TopLevelTemplate =
     //here we should put netID and homework-name
     "# Feedback file for `%s` submitted by `%s %s %s`\n\n" +
-      "# TA/Instructor feedback: \n\nHomework has not been manually inspected yet, please standby.\n\n" +
-      "##### Final score after manual inspection: **todo**\n\n" +
+      "# TA/Instructor feedback: \n\nHomework has not been manually inspected yet, please standby.  \n\n" +
+      "##### Final score after manual inspection: **todo**  \n\n" +
       //after the summary we introduce the TestSuiteSummaryTemplate String
-      "# Summary of results: \n%s\n\n\n" +
-      "# Standard output of program: \n%s\n\n\n" +
-      "# Standard error of program (includes failed tests report): \n%s\n\n\n"
+      "# Summary of results:  \n%s\n\n\n" +
+      "# Standard output of program:  \n%s\n\n\n" +
+      "# Standard error of program (includes failed tests report):  \n%s\n\n\n"
 
   private val TestSuiteSummaryEntryTemplate =
-    "test suite: %s\n" +
-      "    failed tests:    %s\n" +
-      "    test score:      %s\n" +
-      "    adjusted score:  **todo**\n" +
-      "    max possible:    %s\n"
+    "##### test suite: %s\n" +
+      "- failed tests:    %s  \n" +
+      "- test score:      %s  \n" +
+      "- adjusted score:  **todo**  \n" +
+      "- max possible:    %s  \n"
 
   private val TestSuiteSummaryTemplate =
-    "%s\n" +
-      "##### Total score from grading bot: %s"
+    "%s  \n" +
+      "##### Total score from grading bot: %s  "
 
   /**
    * a string containing a feedback file content build according to this template
@@ -135,8 +135,8 @@ class HomeworkExecutor(val student: Student, val homework: HomeworkInfo) {
 
     val racketOutput = try {
       val submittedHomework: Boolean = {
-        //TODO: write a more sophisticated check
-        IO.exists(targetHomeworkPath)
+        //TODO: write a more sophisticated version
+        IO.exists(IO.concatPath(targetHomeworkPath, homework.expectedFiles(0)))
       }
 
       if (submittedHomework) {
@@ -146,7 +146,7 @@ class HomeworkExecutor(val student: Student, val homework: HomeworkInfo) {
         racketExecutor.run(gradingTestFilePath)
       } else {
         System.err.println("Student: " + student.toString + "\t has not submitted homework.")
-        (List(), List())
+        (List(), List("Homework was not submitted."))
       }
     } catch {
       //FIXME: better error handling.

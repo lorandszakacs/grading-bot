@@ -50,7 +50,7 @@ class TerminationMonitor(val fileRun: String) extends Actor {
 
   override def act() {
     receiveWithin(RulesAndAssumptions.TimeoutOfRacketPrograms) {
-      case TerminationMonitor.Stop => { println("stopping %s".format(fileRun)) }
+      case TerminationMonitor.Stop => Unit
       case TIMEOUT => {
         val ps = new PsAuxCommand
         val output = ps.execute._1.filter(s => s.contains(fileRun))

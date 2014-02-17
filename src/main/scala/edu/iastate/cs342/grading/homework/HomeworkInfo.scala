@@ -41,7 +41,13 @@ private object FileToCopy {
   }
 }
 
-class HomeworkInfo private (val testSuites: List[TestSuiteInfo], val imports: List[String], val filesToCopy: List[String], val homeworkName: String, val feedbackFileName: String) {
+class HomeworkInfo private (
+  val testSuites: List[TestSuiteInfo],
+  val imports: List[String],
+  val filesToCopy: List[String],
+  val homeworkName: String,
+  val feedbackFileName: String,
+  val expectedFiles: List[String]) {
 
   /**
    * example:
@@ -82,6 +88,7 @@ object HomeworkInfo {
   private val CommentMarker = "#"
   private val TestSuiteMarker = "*"
   private val HomeworkNameMarker = "homework-name: "
+  private val ExpectedFilesMarker = "expected-files: "
   private val ImportsMarker = "imports: "
   private val FeedbackFileNameMarker = "feedback-file-name: "
   private val FileToCopyMarker = "+"
@@ -92,6 +99,10 @@ object HomeworkInfo {
     assert(homeworkNameLines.length == 1, "There should only be one homework name.")
     val homeworkName = homeworkNameLines(0).split(HomeworkNameMarker)(1)
     assert(homeworkName.length > 0, "Did not find any test suite names in the homeworkinfo")
+
+    val expectedFilesLines = lines.filter(_.startsWith(ExpectedFilesMarker));
+    assert(expectedFilesLines.length == 1, "There should be only one line of expectedfiles")
+    val expectedFiles = expectedFilesLines(0).drop(ExpectedFilesMarker.length).split(" ").toList
 
     val testSuiteLines = lines.filter(_.startsWith(TestSuiteMarker))
     val trimmedTestSuiteLines = testSuiteLines.map(s => s.drop(2))
@@ -107,6 +118,6 @@ object HomeworkInfo {
 
     val filesToCopyLines = lines.filter(_.startsWith(FileToCopyMarker))
     val filesToCopy = filesToCopyLines.map(FileToCopy(_))
-    new HomeworkInfo(testSuites, imports, filesToCopy, homeworkName, feedbackFileName)
+    new HomeworkInfo(testSuites, imports, filesToCopy, homeworkName, feedbackFileName, expectedFiles)
   }
 }

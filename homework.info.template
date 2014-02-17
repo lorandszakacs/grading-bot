@@ -1,22 +1,35 @@
 #the name of the folder in which this particular homework can be found
-homework-name: homework01
+homework-name: homework03
+
+#a list of expected files separated by a space. This list is used to determine
+#whether or not the homework was submitted.
+expected-files: hw03-answer-sheet.rkt
 
 #the names of the tests suites to be run followed by the total amount of points to be awarded
 #if all are correct. Format of each testsuite-points pair should be :
 #* name-of-test-suite number-of-points
 test-suites:
-* part-one-test-suite 35
-* 18-series-a-test-suite 15
-* 18-series-b-test-suite 15
+* p1-balanced?-suite 10
+* p2-a-foldl-suite 5
+* p2-b-foldr-suite 5
+* p3-andmap-suite 5
+* p4-filter-suite 10
+* p5-map-reduce-suite 10
+* p6-series-revisited-suite 10
+* p7-matrix-to-vector-suite 10
+* p8-square-primes-suite 10
+* p9-currying-suite 5
+* p10-scala-for-suite 10
+* p11-implicit-currying-suite 10
 
 #what files should be "imported" with a #%require expression.
-imports: rackunit "hw01-tests.rkt" "test-infrastructure.rkt"
+imports: rackunit "hw03-tests.rkt" "test-infrastructure.rkt"
 
 #name of the feedback file
 feedback-file-name: feedback.md
 
-#list of files to be copied. These paths are relative to the `path-where-to-download` specified in `application.conf`
+#list of files to be copied. This path considers the path-where-to-download as root.
 files-to-copy:
-+ zz-to-copy-hw01/hw01-tests.rkt
-+ zz-to-copy-hw01/test-infrastructure.rkt
-+ zz-to-copy-hw01/util-lib.rkt
++ zz-to-copy/hw03/hw03-tests.rkt
++ zz-to-copy/hw03/test-infrastructure.rkt
++ zz-to-copy/hw03/util-lib.rkt
