@@ -28,11 +28,12 @@ lib/
 start
 
 #grading specific
-grading/src/main/resources/application.conf
+src/main/resources/application.conf
 *students.txt
 grading/test-site
-.info
-build.sbt
+*.info
+*.txt
+
 
 #racket specific:
 compiled/
