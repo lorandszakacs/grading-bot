@@ -7,6 +7,8 @@ class Student private (val firstName: String, val lastName: String, val netID: S
 
   lazy val repoFolderPath = RulesAndAssumptions.createRepoFileSystemLocationFromStudentID(netID)
 
+  def homeworkSolutionFolderPath(homeworkName: String) = repoFolderPath + "/" + homeworkName + "/" + RulesAndAssumptions.StudentSolutionFolder
+
   def canEqual(other: Any) = {
     other.isInstanceOf[edu.iastate.cs342.grading.homework.Student] || other.isInstanceOf[String]
   }

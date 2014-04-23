@@ -15,6 +15,7 @@ trait UserCommandVisitor {
       case gr: GradeAllCommand => UserCommandVisitor.this.visit(gr)
       case aa: AddAndCommitAllCommand => UserCommandVisitor.this.visit(aa)
       case pa: PushAll => UserCommandVisitor.this.visit(pa)
+      case rep: ReportCommand=> UserCommandVisitor.this.visit(rep)
       case h: HelpCommand => UserCommandVisitor.this.visit(h)
     }
   }
@@ -36,5 +37,7 @@ trait UserCommandVisitor {
   def visit(addAll: AddAndCommitAllCommand): UserCommandVisitorResult
 
   def visit(pushAll: PushAll): UserCommandVisitorResult
+  
+  def visit(report: ReportCommand): UserCommandVisitorResult
 
 }

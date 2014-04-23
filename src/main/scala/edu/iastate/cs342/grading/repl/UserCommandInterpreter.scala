@@ -6,6 +6,7 @@ import edu.iastate.cs342.grading.homework.HomeworkInfo
 import edu.iastate.cs342.grading.git.GitRepositoryExecutor
 import edu.iastate.cs342.grading.homework.HomeworkExecutor
 import edu.iastate.cs342.grading.homework.HomeworkExecutor
+import edu.iastate.cs342.grading.constants.Constants
 
 class UserCommandInterpreter extends UserCommandVisitor {
 
@@ -112,6 +113,31 @@ class UserCommandInterpreter extends UserCommandVisitor {
         he.pushFeedbackFile
       }
       println("done pushing.")
+      UserCommandVisitorSuccess()
+    }
+    checkBeforeVisit(helper)
+  }
+
+  override def visit(report: ReportCommand): UserCommandVisitorResult = {
+    def helper(students: List[Student], homeworkInfo: HomeworkInfo): UserCommandVisitorResult = {
+      val lineToLookFor = "##### Final score after manual inspection:"
+      println("========== Report for " + homeworkInfo.homeworkName + " ==========")
+      students.sortBy(s => s.netID) foreach { s =>
+        val feedbackFilePath = IO.concatPath(s.homeworkSolutionFolderPath(homeworkInfo.homeworkName), homeworkInfo.feedbackFileName)
+        if (IO.exists(feedbackFilePath)) {
+          val lines = IO.readLines(feedbackFilePath).filter(_.startsWith(lineToLookFor))
+          if (lines.isEmpty) {
+            System.err.println("invalid feedback file format: " + feedbackFilePath);
+          } else {
+            val line = lines(0).drop(lineToLookFor.length)
+            val finalLine = line.replace("**", "")
+            println("  " + s.netID + "  " + finalLine);
+          }
+        } else {
+          System.err.println("cannot find file: " + feedbackFilePath);
+        }
+
+      }
       UserCommandVisitorSuccess()
     }
     checkBeforeVisit(helper)

@@ -16,11 +16,13 @@ private object UserCommand {
     val AddAndCommitAll = "add-and-commit-all"
     val PushAll = "push-all"
     val LoadStudents = "load-students"
+    val Report = "create-report"
     val LoadHomeworkInfo = "load-homework-info"
     val Help = "help"
     val Exit = "exit"
+
   }
-  
+
 }
 
 case class Fail(val msg: String) extends UserCommand {
@@ -56,6 +58,11 @@ case class AddAndCommitAllCommand() extends UserCommand {
 case class PushAll() extends UserCommand {
   override val instructions: String = ""
   override val command: String = UserCommand.Keywords.PushAll
+}
+
+case class ReportCommand() extends UserCommand {
+  override val instructions: String = ""
+  override val command: String = UserCommand.Keywords.Report
 }
 
 case class HelpCommand() extends UserCommand {
@@ -100,11 +107,13 @@ object CommandParser extends RegexParsers {
 
   def pushAll: Parser[UserCommand] = UserCommand.Keywords.PushAll ^^ { _ => PushAll() }
 
+  def report: Parser[UserCommand] = UserCommand.Keywords.Report ^^ { _ => ReportCommand() }
+
   def help: Parser[UserCommand] = UserCommand.Keywords.Help ^^ { _ => HelpCommand() }
 
   def exit: Parser[UserCommand] = UserCommand.Keywords.Exit ^^ { _ => ExitCommand() }
 
-  def command = (loadStudents | loadHomeworkInfo | grabAll | gradeAll | addAndCommitAll | pushAll | help | exit)
+  def command = (loadStudents | loadHomeworkInfo | grabAll | gradeAll | addAndCommitAll | pushAll | report | help | exit)
 
   def apply(input: String): UserCommand = parseAll(command, input) match {
     case Success(result, _) => result
